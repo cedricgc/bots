@@ -19,6 +19,12 @@ defmodule Bots.Router do
     get "/", PageController, :index
   end
 
+  scope "/groupme", Bots.GroupMe do
+    pipe_through :api
+
+    post "/memebot/callback", MemeBot, :callback
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Bots do
   #   pipe_through :api
