@@ -15,6 +15,10 @@ defmodule Bots do
       # worker(Bots.Worker, [arg1, arg2, arg3]),
     ]
 
+    # Validate Groupme Callback schema
+    [schema: groupme_schema] = Application.get_env(:ex_json_schema, :groupme_callback)
+    ExJsonSchema.Schema.resolve(groupme_schema)
+
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Bots.Supervisor]

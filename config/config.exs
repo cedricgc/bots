@@ -19,6 +19,39 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+groupme_callback_schema = %{
+  "type" => "object",
+  "properties" => %{
+    # array
+    "attachments" => %{ "type" => "array" },
+    # string, URL
+    "avatar_url" => %{ "type" => "string", "format": "uri" },
+    # number, epoch timestamp
+    "create_at" => %{ "type" => "number" },
+    # string, number string
+    "group_id" => %{ "type" => "string" },
+    # string, number string
+    "id" => %{ "type" => "string" },
+    # string, name
+    "name" => %{ "type" => "string" },
+    # string, number string
+    "sender_id" => %{ "type" => "string" },
+    # string
+    "sender_type" => %{ "type" => "string" },
+    # string, number string
+    "source_guid" => %{ "type" => "string" },
+    # boolean
+    "system" => %{ "type" => "boolean" },
+    # string
+    "text" => %{ "type" => "string" },
+    # string, number string
+    "user_id" => %{ "type" => "string" }
+  }
+}
+
+config :ex_json_schema, :groupme_callback,
+  schema: groupme_callback_schema
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
