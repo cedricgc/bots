@@ -5,10 +5,14 @@ defmodule Bots.GroupMe.MemeBot do
   def callback(conn, message_data) do
     Logger.info "Received message from GroupMe"
 
-    %{"text" => text, "sender_id" => sender_id} = message_data
-
-    Logger.debug("Message: #{text} from #{sender_id}")
-
-    json conn, message_data
+    [schema: schema] = Application.get_env(:ex_json_schema, :groupme_callback)
+    case ExJsonSchema.Validator.validate(schema, message_data) do
+      :ok -> 
+        Logger.info("JSON received fits format")
+        send_resp(conn, :ok, "")
+      {:error, error_list} -> 
+        Logger.error("Received Invalid JSON input")
+        send_resp(conn, :expectation_failed, "")
+    end
   end
 end

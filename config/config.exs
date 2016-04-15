@@ -21,13 +21,30 @@ config :logger, :console,
 
 groupme_callback_schema = %{
   "type" => "object",
+  "required" => [
+    "attachments", 
+    "avatar_url", 
+    "created_at",
+    "favorited_by", 
+    "group_id", 
+    "id", 
+    "name", 
+    "sender_id", 
+    "sender_type", 
+    "source_guid", 
+    "system", 
+    "text", 
+    "user_id"
+  ],
   "properties" => %{
     # array
     "attachments" => %{ "type" => "array" },
     # string, URL
     "avatar_url" => %{ "type" => "string", "format": "uri" },
     # number, epoch timestamp
-    "create_at" => %{ "type" => "number" },
+    "created_at" => %{ "type" => "number" },
+    # array
+    "favorited_by" => %{ "type" => "array" },
     # string, number string
     "group_id" => %{ "type" => "string" },
     # string, number string
