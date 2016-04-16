@@ -17,7 +17,8 @@ defmodule Bots.GroupMe.MemeBot do
     end
   end
 
-  defp process_callback_data(message) do
+  defp process_callback_data(%{"sender_type" => "bot"}), do: Logger.info("Ignoring bot message")
+  defp process_callback_data(message = %{"sender_type" => "user"}) do
     %{"text" => body} = message
     body = body |> String.strip
     Logger.info("Message body: #{body}")
