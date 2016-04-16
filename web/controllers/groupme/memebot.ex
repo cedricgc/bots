@@ -42,12 +42,12 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp memebot_dispatch(command_list) do
-    help_text = Application.get_env(:bots, __MODULE__) |> Keyword.fetch(:help)
     [name | subcommands] = command_list
     case subcommands do
-      [] -> help(help_text)
-      ["help"] -> help(help_text)
+      [] -> help()
+      ["help"] -> help()
       ["list"] -> list_memes()
+      ["insult"] -> insult_layton()
       ["add", name, url] -> add_meme(name, url)
       ["update", name, url] -> update_meme(name, url)
       ["delete", name] -> delete_meme(name)
@@ -55,27 +55,38 @@ defmodule Bots.GroupMe.MemeBot do
     end
   end
 
-  defp help(help_text) do
-    :atom
+  defp help_text(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:help)
+  defp memebot_id(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:bot_id)
+
+  defp help() do
+    Bots.GroupMe.send_bot_message(memebot_id, help_text)
   end
 
   defp list_memes() do
-    :atom
+    Bots.GroupMe.send_bot_message(memebot_id, "Memes available:\n")
+  end
+
+  defp insult_layton() do
+    Bots.GroupMe.send_bot_message(memebot_id, "Fuck you Layton")
   end
 
   defp add_meme(name, url) do
-    :atom
+    Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
   end
 
   defp update_meme(name, url) do
-    :atom
+    Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
   end
 
   defp delete_meme(name) do
-    :atom
+    Bots.GroupMe.send_bot_message(memebot_id, "Deleted meme #{name}")
   end
 
   defp bad_command() do
-    :atom
+    error_message = """
+    Error: Command was unrecognized or was provided the wrong number of arguments.
+    Use memebot help to list all commands.
+    """
+    Bots.GroupMe.send_bot_message(memebot_id, error_message)
   end
 end
