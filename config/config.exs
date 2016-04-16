@@ -14,6 +14,27 @@ config :bots, Bots.Endpoint,
   pubsub: [name: Bots.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :bots, Bots.GroupMe.MemeBot,
+  bot_id: System.get_env("BOTS_MEMEBOT_BOT_ID"),
+  help: """
+  Memebot: Posts memes
+  memebot COMMAND [args...]
+
+  Options:
+  add NAME URL
+    Registers image at URL with NAME
+  update NAME URL
+    Updates URL assigned to NAME
+  delete NAME
+    Removes registered meme
+  help
+    Shows this help
+  list
+    Lists available memes
+  insult
+    Insults Layton
+  """
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
