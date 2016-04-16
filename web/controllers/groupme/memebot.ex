@@ -42,7 +42,7 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp memebot_dispatch(command_list) do
-    [bot_id: bot_id, help: help_text] = Application.get_env(:bots, __MODULE__)
+    help_text = Application.get_env(:bots, __MODULE__) |> Keyword.fetch(:help)
     [name | subcommands] = command_list
     case subcommands do
       [] -> help(help_text)
