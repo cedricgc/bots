@@ -21,5 +21,18 @@ defmodule Bots.Meme do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> unique_constraint(:name)
+    |> validate_change(:link, :link_valid, &valid_link/2)
   end
+
+  def valid_link(field, str) do
+    uri = URI.parse(str)
+    case uri do
+      %URI{scheme: nil} -> [link: "Link is not a url"]
+      %URI{host: nil} -> [link: "Link is not a url"]
+      %URI{path: nil} -> [link: "Link is not a url"]
+      %URI{scheme: "http"} -> []
+      %URI{scheme: "https"} -> []
+      %URI{scheme: _} -> [link: "Invalid scheme, must be http or https"]
+    end 
+  end 
 end

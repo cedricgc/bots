@@ -5,7 +5,6 @@ defmodule Bots.GroupMe.MemeBot do
 
   def callback(conn, message_data) do
     Logger.info "Received message from GroupMe"
-
     [schema: schema] = Application.get_env(:ex_json_schema, :groupme_callback)
     case ExJsonSchema.Validator.validate(schema, message_data) do
       :ok -> 
@@ -23,23 +22,23 @@ defmodule Bots.GroupMe.MemeBot do
     %{"text" => body} = message
     body = body |> String.strip
     Logger.info("Message body: #{body}")
-    if meme?(body) do
-      serve_image(body)
-    else
-      tokens = String.split(body)
-      Logger.info("tokens: #{inspect tokens}")
-      if List.first(tokens) == "memebot" do
-        memebot_dispatch(tokens)
-      end
+    case Repo.get_by(Meme, name: body) do
+      %Meme{name: name, link: link} ->
+        Logger.info("Recognized meme #{name}, will post link #{link}")
+        serve_image(link)
+      nil ->
+        tokens = String.split(body)
+        Logger.info("tokens: #{inspect tokens}")
+        if List.first(tokens) == "memebot" do
+          memebot_dispatch(tokens)
+        else
+          Logger.info("Nothing to do, discarding message")
+        end
     end
   end
 
-  defp meme?(string) do
-    false
-  end
-
-  defp serve_image(image_name) do
-    Logger.info("serving image with name #{image_name}")
+  defp serve_image(image_link) do
+    Bots.GroupMe.send_bot_message(memebot_id, image_link)
   end
 
   defp memebot_dispatch(command_list) do
@@ -56,15 +55,18 @@ defmodule Bots.GroupMe.MemeBot do
     end
   end
 
-  defp help_text(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:help)
-  defp memebot_id(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:bot_id)
+  def help_text(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:help)
+  def memebot_id(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:bot_id)
 
   defp help() do
     Bots.GroupMe.send_bot_message(memebot_id, help_text)
   end
 
   defp list_memes() do
-    Bots.GroupMe.send_bot_message(memebot_id, "Memes available:\n")
+    memes = Repo.all(Meme)
+    |> Enum.map(fn(meme) -> meme.name end)
+    |> Enum.join("\n")
+    Bots.GroupMe.send_bot_message(memebot_id, "Memes available:\n#{memes}")
   end
 
   defp insult_layton() do
@@ -72,48 +74,51 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp add_meme(name, url) do
-    if link_valid?(url) do
-      changeset = Meme.changeset(%Meme{}, %{"name" => name, "link" => url})
-      case Repo.insert(changeset) do
-        {:ok, _meme} ->
-          Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
-        {:error, _changeset} ->
-          Bots.GroupMe.send_bot_message(memebot_id, "Error: failed to register meme")
-      end
-    else
-      Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
+    changeset = Meme.changeset(%Meme{}, %{"name" => name, "link" => url})
+    case Repo.insert(changeset) do
+      {:ok, _meme} ->
+        Logger.info("Registered #{name} with image #{url}")
+        Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
+      {:error, %Ecto.Changeset{errors: [name: error]}} ->
+        Bots.GroupMe.send_bot_message(memebot_id, "ERROR: Issue with name: #{error}")
+      {:error, %Ecto.Changeset{errors: [link: error]}} ->
+        Bots.GroupMe.send_bot_message(memebot_id, "ERROR: Issue with url: #{error}")
     end
   end
 
   defp update_meme(name, url) do
-    if link_valid?(url) do
-      meme = Repo.get_by(Meme, name: name)
+    meme = Repo.get_by(Meme, name: name)
+    if meme == nil do
+      Logger.info("Could not find meme name in registered names")
+      message = "Could not find meme name in registered names, " <>
+        "use memebot list to list all registered memes"
+      Bots.GroupMe.send_bot_message(memebot_id, message)
+    else
       changeset = Meme.changeset(meme, %{"name" => name, "link" => url})
       case Repo.update(changeset) do
         {:ok, _meme} ->
+          Logger.info("Updated #{name} with image #{url}")
           Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
-        {:error, _changeset} ->
-          Bots.GroupMe.send_bot_message(memebot_id, "Error: failed to register meme")
+        {:error, %Ecto.Changeset{errors: [name: error]}} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "ERROR: Issue with name: #{error}")
+        {:error, %Ecto.Changeset{errors: [link: error]}} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "ERROR: Issue with url: #{error}")
       end
-    else
-      Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
     end
   end
 
-  defp link_valid?(str) do
-    uri = URI.parse(str)
-    case uri do
-      %URI{scheme: nil} -> false
-      %URI{host: nil} -> false
-      %URI{path: nil} -> false
-      %URI{scheme: "http"} -> true
-      %URI{scheme: "https"} -> true
-      %URI{scheme: _} -> false
-    end 
-  end 
-
   defp delete_meme(name) do
-    Bots.GroupMe.send_bot_message(memebot_id, "Deleted meme #{name}")
+    meme = Repo.get_by(Meme, name: name)
+    if meme == nil do
+      Logger.info("Could not find meme name in registered names")
+      message = "Could not find meme name in registered names, " <>
+        "use memebot list to list all registered memes"
+      Bots.GroupMe.send_bot_message(memebot_id, message)
+    else
+      Repo.delete!(meme)
+      Logger.info("Deleted meme #{name}")
+      Bots.GroupMe.send_bot_message(memebot_id, "Deleted meme #{name}")
+    end
   end
 
   defp bad_command() do
