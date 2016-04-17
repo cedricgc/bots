@@ -8,6 +8,7 @@ defmodule Bots.Repo.Migrations.CreateMeme do
 
       timestamps
     end
+    create unique_index(:memes, [:name])
 
   end
 end
