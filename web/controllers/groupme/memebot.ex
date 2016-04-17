@@ -71,12 +71,32 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp add_meme(name, url) do
-    Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
+    if link_valid?(url) do
+      Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
+    else
+      Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
+    end
   end
 
   defp update_meme(name, url) do
-    Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
+    if link_valid?(url) do
+      Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
+    else
+      Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
+    end
   end
+
+  defp link_valid?(str) do
+    uri = URI.parse(str)
+    case uri do
+      %URI{scheme: nil} -> false
+      %URI{host: nil} -> false
+      %URI{path: nil} -> false
+      %URI{scheme: "http"} -> true
+      %URI{scheme: "https"} -> true
+      %URI{scheme: _} -> false
+    end 
+  end 
 
   defp delete_meme(name) do
     Bots.GroupMe.send_bot_message(memebot_id, "Deleted meme #{name}")
