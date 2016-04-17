@@ -1,5 +1,6 @@
 defmodule Bots.GroupMe.MemeBot do
   use Bots.Web, :controller
+  alias Bots.Meme
   require Logger
 
   def callback(conn, message_data) do
@@ -72,7 +73,13 @@ defmodule Bots.GroupMe.MemeBot do
 
   defp add_meme(name, url) do
     if link_valid?(url) do
-      Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
+      changeset = Meme.changeset(%Meme{}, %{"name" => name, "link" => url})
+      case Repo.insert(changeset) do
+        {:ok, _meme} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "Registered #{name} with image #{url}")
+        {:error, _changeset} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "Error: failed to register meme")
+      end
     else
       Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
     end
@@ -80,7 +87,14 @@ defmodule Bots.GroupMe.MemeBot do
 
   defp update_meme(name, url) do
     if link_valid?(url) do
-      Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
+      meme = Repo.get_by(Meme, name: name)
+      changeset = Meme.changeset(meme, %{"name" => name, "link" => url})
+      case Repo.update(changeset) do
+        {:ok, _meme} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "Updated #{name} with image #{url}")
+        {:error, _changeset} ->
+          Bots.GroupMe.send_bot_message(memebot_id, "Error: failed to register meme")
+      end
     else
       Bots.GroupMe.send_bot_message(memebot_id, "Error: Link provided is invalid")
     end
