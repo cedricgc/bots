@@ -61,7 +61,7 @@ groupme_callback_schema = %{
     # array
     "attachments" => %{ "type" => "array" },
     # string, URL
-    "avatar_url" => %{ "type" => "string", "format": "uri" },
+    "avatar_url" => %{ "type" => ["string", "null"], "format": "uri" },
     # number, epoch timestamp
     "created_at" => %{ "type" => "number" },
     # array
