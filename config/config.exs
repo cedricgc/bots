@@ -46,7 +46,7 @@ groupme_callback_schema = %{
     "attachments", 
     "avatar_url", 
     "created_at",
-    "favorited_by", 
+    # "favorited_by", 
     "group_id", 
     "id", 
     "name", 
@@ -65,7 +65,7 @@ groupme_callback_schema = %{
     # number, epoch timestamp
     "created_at" => %{ "type" => "number" },
     # array
-    "favorited_by" => %{ "type" => "array" },
+    # "favorited_by" => %{ "type" => "array" },
     # string, number string
     "group_id" => %{ "type" => "string" },
     # string, number string
