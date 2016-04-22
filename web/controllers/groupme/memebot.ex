@@ -29,7 +29,8 @@ defmodule Bots.GroupMe.MemeBot do
       nil ->
         tokens = String.split(body)
         Logger.info("tokens: #{inspect tokens}")
-        if List.first(tokens) == "memebot" do
+        possible_name = List.first(tokens) |> String.downcase
+        if possible_name == "memebot" do
           memebot_dispatch(tokens)
         else
           Logger.info("Nothing to do, discarding message")
