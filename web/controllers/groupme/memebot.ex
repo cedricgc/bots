@@ -3,6 +3,8 @@ defmodule Bots.GroupMe.MemeBot do
   alias Bots.Meme
   require Logger
 
+  @friends ["Cedric", "Kyle", "Enrique", "Ian", "Layton", "Andrew"]
+
   def callback(conn, message_data) do
     Logger.info "Received message from GroupMe"
     [schema: schema] = Application.get_env(:ex_json_schema, :groupme_callback)
@@ -48,7 +50,7 @@ defmodule Bots.GroupMe.MemeBot do
       [] -> help()
       ["help"] -> help()
       ["list"] -> list_memes()
-      ["insult"] -> insult_layton()
+      ["insult"] -> insult_friend()
       ["add", name, url] -> add_meme(name, url)
       ["update", name, url] -> update_meme(name, url)
       ["delete", name] -> delete_meme(name)
@@ -70,8 +72,9 @@ defmodule Bots.GroupMe.MemeBot do
     Bots.GroupMe.send_bot_message(memebot_id, "Memes available:\n#{memes}")
   end
 
-  defp insult_layton() do
-    Bots.GroupMe.send_bot_message(memebot_id, "Fuck you Layton")
+  defp insult_friend() do
+    target = Enum.random(@friends)
+    Bots.GroupMe.send_bot_message(memebot_id, "Fuck you #{target}")
   end
 
   defp add_meme(name, url) do
