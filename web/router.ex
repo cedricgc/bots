@@ -16,7 +16,7 @@ defmodule Bots.Router do
   scope "/", Bots do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    # get "/", PageController, :index
   end
 
   scope "/groupme", Bots.GroupMe do
