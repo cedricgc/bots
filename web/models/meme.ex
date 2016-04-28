@@ -8,8 +8,8 @@ defmodule Bots.Meme do
     timestamps
   end
 
-  @required_fields ~w(name)
-  @optional_fields ~w(link)
+  @required_fields ~w(name link)
+  @optional_fields ~w()
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -24,7 +24,7 @@ defmodule Bots.Meme do
     |> validate_change(:link, :link_valid, &valid_link/2)
   end
 
-  def valid_link(field, str) do
+  def valid_link(_field, str) do
     uri = URI.parse(str)
     case uri do
       %URI{scheme: nil} -> [link: "Link is not a url"]
