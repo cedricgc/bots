@@ -24,7 +24,7 @@ defmodule Bots.GroupMe.MemeBot do
     %{"text" => body} = message
     body = body |> String.strip
     Logger.info("Message body: #{body}")
-    case Repo.get_by(Meme, name: body) do
+    case Repo.get_by(Meme, name: String.downcase(body)) do
       %Meme{name: name, link: link} ->
         Logger.info("Recognized meme #{name}, will post link #{link}")
         serve_image(link)
@@ -51,9 +51,9 @@ defmodule Bots.GroupMe.MemeBot do
       ["help"] -> help()
       ["list"] -> list_memes()
       ["insult"] -> insult_friend()
-      ["add", name, url] -> add_meme(name, url)
-      ["update", name, url] -> update_meme(name, url)
-      ["delete", name] -> delete_meme(name)
+      ["add", name, url] -> add_meme(String.downcase(name), url)
+      ["update", name, url] -> update_meme(String.downcase(name), url)
+      ["delete", name] -> delete_meme(String.downcase(name))
       _ -> bad_command()
     end
   end
