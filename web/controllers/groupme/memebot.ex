@@ -13,7 +13,7 @@ defmodule Bots.GroupMe.MemeBot do
         Logger.info("JSON received fits format")
         Task.start(fn -> process_callback_data(message_data) end)
         send_resp(conn, :ok, "")
-      {:error, error_list} -> 
+      {:error, _error_list} -> 
         Logger.error("Received Invalid JSON input")
         send_resp(conn, :expectation_failed, "")
     end
@@ -45,7 +45,7 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp memebot_dispatch(command_list) do
-    [name | subcommands] = command_list
+    [_name | subcommands] = command_list
     case subcommands do
       [] -> help()
       ["help"] -> help()
