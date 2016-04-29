@@ -58,31 +58,18 @@ groupme_callback_schema = %{
     "user_id"
   ],
   "properties" => %{
-    # array
     "attachments" => %{ "type" => "array" },
-    # string, URL
     "avatar_url" => %{ "type" => ["string", "null"], "format": "uri" },
-    # number, epoch timestamp
     "created_at" => %{ "type" => "number" },
-    # array
     # "favorited_by" => %{ "type" => "array" },
-    # string, number string
     "group_id" => %{ "type" => "string" },
-    # string, number string
     "id" => %{ "type" => "string" },
-    # string, name
     "name" => %{ "type" => "string" },
-    # string, number string
     "sender_id" => %{ "type" => "string" },
-    # string
     "sender_type" => %{ "type" => "string" },
-    # string, number string
     "source_guid" => %{ "type" => "string" },
-    # boolean
     "system" => %{ "type" => "boolean" },
-    # string
     "text" => %{ "type" => "string" },
-    # string, number string
     "user_id" => %{ "type" => "string" }
   }
 }
