@@ -6,6 +6,8 @@ defmodule Bots do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    schema_validations()
+
     children = [
       # Start the endpoint when the application starts
       supervisor(Bots.Endpoint, []),
@@ -14,10 +16,6 @@ defmodule Bots do
       # Here you could define other workers and supervisors as children
       # worker(Bots.Worker, [arg1, arg2, arg3]),
     ]
-
-    # Validate Groupme Callback schema
-    [schema: groupme_schema] = Application.get_env(:ex_json_schema, :groupme_callback)
-    ExJsonSchema.Schema.resolve(groupme_schema)
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
@@ -30,5 +28,12 @@ defmodule Bots do
   def config_change(changed, _new, removed) do
     Bots.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def schema_validations() do
+    # Validate Groupme Callback schema
+    groupme_schema = Application.get_env(:ex_json_schema, :groupme_callback) 
+    |> Keyword.fetch!(:schema)
+    ExJsonSchema.Schema.resolve(groupme_schema)
   end
 end
