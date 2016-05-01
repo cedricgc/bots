@@ -30,7 +30,7 @@ defmodule Bots.MemeTracker do
   @doc """
   Clears any meme data set for user
   """
-  def delete_meme(tracker, user) do
+  def get_and_delete_meme(tracker, user) do
     Agent.get_and_update(tracker, &Map.pop(&1, user))
   end
 end
