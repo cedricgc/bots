@@ -26,11 +26,36 @@ defmodule Bots.GroupMe.MemeBot do
     body = normalize_to_string(body)
     Logger.debug("Message body: #{body}")
     Logger.debug("Attachments: #{inspect attachments}")
-    respond_or_dispatch(body, user_id)
+    case register_attached_image(attachments, user_id) do
+      :ok -> Logger.debug("Found saved meme to register with attachment")
+      :no_action -> 
+        Logger.debug("Nothing to process with attachments")
+        respond_or_dispatch(body, user_id)
+    end
   end
 
   defp normalize_to_string(nil), do: ""
   defp normalize_to_string(message), do: String.strip(message)
+
+  defp register_attached_image([], _user_id), do: :no_action
+  defp register_attached_image([%{"type" => type, "url" => url}], user_id) do
+    Logger.debug("type: #{type}")
+    cond do
+      type == "linked_image" || type == "image" ->
+        case MemeTracker.get_and_delete_meme(MemeTracker, user_id) do
+          nil -> :no_action
+          %{name: name, action: action} ->
+            Logger.debug("found meme #{name} to register with #{url}")
+            case action do
+              :add -> add_meme(name, url)
+              :update -> update_meme(name, url)
+              :ok
+            end
+        end
+      true -> :no_action
+    end
+  end
+  defp register_attached_image(_attachments, _user_id), do: :no_action
 
   defp respond_or_dispatch(body, user_id) do
     case Repo.get_by(Meme, name: String.downcase(body)) do
