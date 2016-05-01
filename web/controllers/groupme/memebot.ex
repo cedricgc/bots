@@ -32,7 +32,11 @@ defmodule Bots.GroupMe.MemeBot do
       nil ->
         tokens = String.split(body)
         Logger.debug("tokens: #{inspect tokens}")
-        possible_name = List.first(tokens) |> String.downcase
+        possible_name = ""
+        case tokens do
+          [] -> possible_name = ""
+          _ -> possible_name = List.first(tokens) |> String.downcase 
+        end
         if possible_name == "memebot" do
           memebot_dispatch(tokens, user_id)
         else
