@@ -15,6 +15,7 @@ defmodule Bots do
       supervisor(Bots.Repo, []),
       # Here you could define other workers and supervisors as children
       # worker(Bots.Worker, [arg1, arg2, arg3]),
+      worker(Bots.MemeTracker, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
