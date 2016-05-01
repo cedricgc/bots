@@ -41,7 +41,7 @@ defmodule Bots.GroupMe.MemeBot do
         tokens = String.split(body)
         Logger.debug("tokens: #{inspect tokens}")
         possible_name = find_possible_name(tokens)
-        if possible_name == "memebot" do
+        if String.downcase(possible_name) == "memebot" do
           memebot_dispatch(tokens, user_id)
         else
           Logger.info("Nothing to do, discarding message")
@@ -50,7 +50,7 @@ defmodule Bots.GroupMe.MemeBot do
   end
 
   defp find_possible_name([]), do: ""
-  defp find_possible_name(tokens), do: List.first(tokens) |> String.downcase
+  defp find_possible_name(tokens), do: List.first(tokens)
 
   defp serve_image(image_link) do
     Bots.GroupMe.send_bot_message(memebot_id, image_link)
