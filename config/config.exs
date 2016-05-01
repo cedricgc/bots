@@ -69,7 +69,7 @@ groupme_callback_schema = %{
     "sender_type" => %{ "type" => "string" },
     "source_guid" => %{ "type" => "string" },
     "system" => %{ "type" => "boolean" },
-    "text" => %{ "type" => "string" },
+    "text" => %{ "type" => ["string", "null"] },
     "user_id" => %{ "type" => "string" }
   }
 }
