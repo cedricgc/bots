@@ -69,13 +69,13 @@ defmodule Bots.GroupMe.MemeBot do
   def memebot_id(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:bot_id)
 
   defp add_meme_listener(user, name, :add) do
-    MemeTracker.set_meme(user, name, :add)
+    MemeTracker.set_meme(MemeTracker, user, name, :add)
     Logger.info("Added listener for user #{user} on meme name #{name} for a future add action")
 
     notify_add_listener("Next image posted by user will be added for meme #{name}")
   end
   defp add_meme_listener(user, name, :update) do
-    MemeTracker.set_meme(user, name, :update)
+    MemeTracker.set_meme(MemeTracker, user, name, :update)
     Logger.info("Added listener for user #{user} on meme name #{name} for a future update action")
 
     notify_add_listener("Next image posted by user will update meme #{name}")

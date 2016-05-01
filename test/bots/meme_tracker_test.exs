@@ -1,12 +1,23 @@
 defmodule Bots.MemeTrackerTest do
-   # Use the module
    use ExUnit.Case, async: true
 
-   # The "test" macro is imported by ExUnit.Case
-   test "stores name for user" do
-     assert Bots.MemeTracker.get_meme("1234567") == nil
+   setup context do
+     {:ok, pid} = Bots.MemeTracker.start_link(context.test)
+     {:ok, pid: pid}
+   end
 
-     Bots.MemeTracker.set_meme("1234567", "takeonme.gif", :add)
-     assert Bots.MemeTracker.get_meme("1234567") == %{:name => "takeonme.gif", :action => :add}
+   test "stores name for user", %{pid: pid} do
+     assert Bots.MemeTracker.get_meme(pid, "1234567") == nil
+
+     Bots.MemeTracker.set_meme(pid, "1234567", "takeonme.gif", :add)
+     assert Bots.MemeTracker.get_meme(pid, "1234567") == %{:name => "takeonme.gif", :action => :add}
+   end
+
+   test "delete meme metadata for user", %{pid: pid} do
+     assert Bots.MemeTracker.get_meme(pid, "1234567") == nil
+
+     Bots.MemeTracker.set_meme(pid, "1234567", "takeonme.gif", :add)
+     Bots.MemeTracker.delete_meme(pid, "1234567")
+     assert Bots.MemeTracker.get_meme(pid, "1234567") == nil
    end
  end
