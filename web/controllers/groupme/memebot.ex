@@ -1,6 +1,7 @@
 defmodule Bots.GroupMe.MemeBot do
   use Bots.Web, :controller
   alias Bots.Meme
+  alias Bots.MemeTracker
   require Logger
 
   @friends ["Cedric", "Kyle", "Enrique", "Ian", "Layton", "Andrew"]
@@ -21,7 +22,7 @@ defmodule Bots.GroupMe.MemeBot do
 
   defp process_callback_data(%{"sender_type" => "bot"}), do: Logger.info("Ignoring bot message")
   defp process_callback_data(message = %{"sender_type" => "user"}) do
-    %{"text" => body} = message
+    %{"text" => body, "user_id" => user_id} = message
     body = body |> String.strip
     Logger.info("Message body: #{body}")
     case Repo.get_by(Meme, name: String.downcase(body)) do
@@ -33,7 +34,7 @@ defmodule Bots.GroupMe.MemeBot do
         Logger.info("tokens: #{inspect tokens}")
         possible_name = List.first(tokens) |> String.downcase
         if possible_name == "memebot" do
-          memebot_dispatch(tokens)
+          memebot_dispatch(tokens, user_id)
         else
           Logger.info("Nothing to do, discarding message")
         end
@@ -44,14 +45,16 @@ defmodule Bots.GroupMe.MemeBot do
     Bots.GroupMe.send_bot_message(memebot_id, image_link)
   end
 
-  defp memebot_dispatch(command_list) do
+  defp memebot_dispatch(command_list, user) do
     [_name | subcommands] = command_list
     case subcommands do
       [] -> help()
       ["help"] -> help()
       ["list"] -> list_memes()
       ["insult"] -> insult_friend()
+      ["add", name, "next"] -> add_meme_listener(user, name, :add)
       ["add", name, url] -> add_meme(String.downcase(name), url)
+      ["update", name, "next"] -> add_meme_listener(user, name, :update)
       ["update", name, url] -> update_meme(String.downcase(name), url)
       ["delete", name] -> delete_meme(String.downcase(name))
       _ -> bad_command()
@@ -60,6 +63,23 @@ defmodule Bots.GroupMe.MemeBot do
 
   def help_text(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:help)
   def memebot_id(), do: Application.get_env(:bots, __MODULE__) |> Keyword.fetch!(:bot_id)
+
+  defp add_meme_listener(user, name, :add) do
+    MemeTracker.set_meme(user, name, :add)
+    Logger.debug("Added listener for user #{user} on meme name #{name} for a future add action")
+
+    notify_add_listener("Next image posted by user will be added for meme #{name}")
+  end
+  defp add_meme_listener(user, name, :update) do
+    MemeTracker.set_meme(user, name, :update)
+    Logger.debug("Added listener for user #{user} on meme name #{name} for a future update action")
+
+    notify_add_listener("Next image posted by user will update meme #{name}")
+  end
+
+  defp notify_add_listener(message) do
+    Bots.GroupMe.send_bot_message(memebot_id, message)
+  end
 
   defp help() do
     Bots.GroupMe.send_bot_message(memebot_id, help_text)
