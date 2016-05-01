@@ -22,9 +22,10 @@ defmodule Bots.GroupMe.MemeBot do
 
   defp process_callback_data(%{"sender_type" => "bot"}), do: Logger.info("Ignoring bot message")
   defp process_callback_data(message = %{"sender_type" => "user"}) do
-    %{"text" => body, "user_id" => user_id} = message
+    %{"text" => body, "user_id" => user_id, "attachments" => attachments} = message
     body = body |> String.strip
     Logger.debug("Message body: #{body}")
+    Logger.debug("Attachments: #{inspect attachments}")
     case Repo.get_by(Meme, name: String.downcase(body)) do
       %Meme{name: name, link: link} ->
         Logger.info("Recognized meme #{name}, will post link #{link}")
@@ -32,11 +33,7 @@ defmodule Bots.GroupMe.MemeBot do
       nil ->
         tokens = String.split(body)
         Logger.debug("tokens: #{inspect tokens}")
-        possible_name = ""
-        case tokens do
-          [] -> possible_name = ""
-          _ -> possible_name = List.first(tokens) |> String.downcase 
-        end
+        possible_name = find_possible_name(tokens)
         if possible_name == "memebot" do
           memebot_dispatch(tokens, user_id)
         else
@@ -44,6 +41,9 @@ defmodule Bots.GroupMe.MemeBot do
         end
     end
   end
+
+  defp find_possible_name([]), do: ""
+  defp find_possible_name(tokens), do: List.first(tokens) |> String.downcase
 
   defp serve_image(image_link) do
     Bots.GroupMe.send_bot_message(memebot_id, image_link)
