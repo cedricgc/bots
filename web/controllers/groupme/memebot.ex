@@ -23,9 +23,16 @@ defmodule Bots.GroupMe.MemeBot do
   defp process_callback_data(%{"sender_type" => "bot"}), do: Logger.info("Ignoring bot message")
   defp process_callback_data(message = %{"sender_type" => "user"}) do
     %{"text" => body, "user_id" => user_id, "attachments" => attachments} = message
-    body = body |> String.strip
+    body = normalize_to_string(body)
     Logger.debug("Message body: #{body}")
     Logger.debug("Attachments: #{inspect attachments}")
+    respond_or_dispatch(body, user_id)
+  end
+
+  defp normalize_to_string(nil), do: ""
+  defp normalize_to_string(message), do: String.strip(message)
+
+  defp respond_or_dispatch(body, user_id) do
     case Repo.get_by(Meme, name: String.downcase(body)) do
       %Meme{name: name, link: link} ->
         Logger.info("Recognized meme #{name}, will post link #{link}")
