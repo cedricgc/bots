@@ -24,14 +24,14 @@ defmodule Bots.GroupMe.MemeBot do
   defp process_callback_data(message = %{"sender_type" => "user"}) do
     %{"text" => body, "user_id" => user_id} = message
     body = body |> String.strip
-    Logger.info("Message body: #{body}")
+    Logger.debug("Message body: #{body}")
     case Repo.get_by(Meme, name: String.downcase(body)) do
       %Meme{name: name, link: link} ->
         Logger.info("Recognized meme #{name}, will post link #{link}")
         serve_image(link)
       nil ->
         tokens = String.split(body)
-        Logger.info("tokens: #{inspect tokens}")
+        Logger.debug("tokens: #{inspect tokens}")
         possible_name = List.first(tokens) |> String.downcase
         if possible_name == "memebot" do
           memebot_dispatch(tokens, user_id)
@@ -66,13 +66,13 @@ defmodule Bots.GroupMe.MemeBot do
 
   defp add_meme_listener(user, name, :add) do
     MemeTracker.set_meme(user, name, :add)
-    Logger.debug("Added listener for user #{user} on meme name #{name} for a future add action")
+    Logger.info("Added listener for user #{user} on meme name #{name} for a future add action")
 
     notify_add_listener("Next image posted by user will be added for meme #{name}")
   end
   defp add_meme_listener(user, name, :update) do
     MemeTracker.set_meme(user, name, :update)
-    Logger.debug("Added listener for user #{user} on meme name #{name} for a future update action")
+    Logger.info("Added listener for user #{user} on meme name #{name} for a future update action")
 
     notify_add_listener("Next image posted by user will update meme #{name}")
   end
