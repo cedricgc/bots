@@ -17,7 +17,7 @@ defmodule Bots.MemeTrackerTest do
      assert Bots.MemeTracker.get_meme(pid, "1234567") == nil
 
      Bots.MemeTracker.set_meme(pid, "1234567", "takeonme.gif", :add)
-     Bots.MemeTracker.delete_meme(pid, "1234567")
+     Bots.MemeTracker.get_and_delete_meme(pid, "1234567")
      assert Bots.MemeTracker.get_meme(pid, "1234567") == nil
    end
  end
