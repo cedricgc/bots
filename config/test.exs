@@ -7,7 +7,7 @@ config :bots, Bots.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warn, backends: []
 
 # Configure your database
 config :bots, Bots.Repo,
