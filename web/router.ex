@@ -22,7 +22,7 @@ defmodule Bots.Router do
   scope "/groupme", Bots.GroupMe do
     pipe_through :api
 
-    post "/memebot/callback", MemeBot, :callback
+    post "/memebot/callback", MemeBotController, :callback
   end
 
   # Other scopes may use custom stacks.

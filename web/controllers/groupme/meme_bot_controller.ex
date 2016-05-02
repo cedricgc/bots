@@ -1,4 +1,4 @@
-defmodule Bots.GroupMe.MemeBot do
+defmodule Bots.GroupMe.MemeBotController do
   use Bots.Web, :controller
   alias Bots.Meme
   alias Bots.MemeTracker

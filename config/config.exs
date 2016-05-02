@@ -14,7 +14,7 @@ config :bots, Bots.Endpoint,
   pubsub: [name: Bots.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
-config :bots, Bots.GroupMe.MemeBot,
+config :bots, Bots.GroupMe.MemeBotController,
   bot_id: System.get_env("BOTS_MEMEBOT_BOT_ID"),
   help: """
   Memebot: Posts memes
