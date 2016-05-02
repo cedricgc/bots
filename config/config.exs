@@ -21,9 +21,9 @@ config :bots, Bots.GroupMe.MemeBot,
   memebot COMMAND [args...]
 
   Options:
-  add NAME URL
+  add NAME [URL | "next"]
     Registers image at URL with NAME
-  update NAME URL
+  update NAME [URL | "next"]
     Updates URL assigned to NAME
   delete NAME
     Removes registered meme
@@ -32,7 +32,7 @@ config :bots, Bots.GroupMe.MemeBot,
   list
     Lists available memes
   insult
-    Insults Layton
+    Insults random friend
   """
 
 # Configures Elixir's Logger
