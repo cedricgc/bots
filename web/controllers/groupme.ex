@@ -9,7 +9,7 @@ defmodule Bots.GroupMe do
     case HTTPoison.post(@base_url <> "/bots/post", body, @headers) do
       {:ok, %HTTPoison.Response{status_code: 202}} -> Logger.info("Posted bot message to GroupMe: #{message}")
       {:ok, %HTTPoison.Response{status_code: 400}} -> Logger.error("GroupMe did not accept message #{message}")
-      {:error, err} -> Logger.error("Failed to post message to GroupMe: #{message}")
+      {:error, _} -> Logger.error("Failed to post message to GroupMe: #{message}")
     end
   end
 end
