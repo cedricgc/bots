@@ -12,4 +12,4 @@ RUN mix local.hex --force \
     && mix deps.compile \
     && mix compile
 
-CMD ["iex", "-S", "mix"]
+CMD ["elixir", "-S", "mix", "phoenix.server", "--no-deps-check", "--no-compile", "--no-halt"]
