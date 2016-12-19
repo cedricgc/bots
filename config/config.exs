@@ -31,8 +31,6 @@ config :bots, Bots.GroupMe.MemeBotController,
     Shows this help
   list
     Lists available memes
-  insult
-    Insults random friend
   """
 
 # Configures Elixir's Logger
@@ -43,17 +41,17 @@ config :logger, :console,
 groupme_callback_schema = %{
   "type" => "object",
   "required" => [
-    "attachments", 
-    "avatar_url", 
+    "attachments",
+    "avatar_url",
     "created_at",
-    "group_id", 
-    "id", 
-    "name", 
-    "sender_id", 
-    "sender_type", 
-    "source_guid", 
-    "system", 
-    "text", 
+    "group_id",
+    "id",
+    "name",
+    "sender_id",
+    "sender_type",
+    "source_guid",
+    "system",
+    "text",
     "user_id"
   ],
   "properties" => %{
