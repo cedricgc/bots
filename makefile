@@ -1,5 +1,9 @@
 
 
+.PHONY: build_dev
+build_dev:
+	docker build . -t bots-dev
+
 .PHONY: build_test
 build_test:
 	docker build . -t bots-test --build-arg MIX_ENV=test
