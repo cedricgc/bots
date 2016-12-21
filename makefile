@@ -10,7 +10,7 @@ build_test:
 
 .PHONY: test
 test:
-	kubectl create -f kubernetes/test.yaml
+	kubectl create -f kubernetes/bots-test.yaml
 	sleep 5
 	kubectl exec -it bots-test mix test
 	kubectl delete pod bots-test --now
