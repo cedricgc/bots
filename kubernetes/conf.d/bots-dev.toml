@@ -1,0 +1,8 @@
+[template]
+src = "bots-dev.yaml"
+dest = "kubernetes/generated/bots-dev.yaml"
+keys = [
+    "DATABASE_URL",
+    "SECRET_KEY_BASE",
+    "BOTS_MEMEBOT_BOT_ID",
+]

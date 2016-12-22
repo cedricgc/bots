@@ -1,0 +1,11 @@
+[template]
+src = "create_database.sh"
+dest = "kubernetes/generated/create_database.sh"
+mode = "0755"
+keys = [
+    "IMAGE_TAG",
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_DATABASE",
+    "PERSISTENCE_SIZE",
+]

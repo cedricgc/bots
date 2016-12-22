@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "bots-test"
+  labels:
+    app: bots
+spec:
+  containers:
+    - name: bots-test
+      image: bots-test
+      imagePullPolicy: Never
+    - name: postgres
+      image: postgres:9.5
+  restartPolicy: Never

@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bots-dev
+  labels:
+    project: bots
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bots
+        project: bots
+        track: dev
+    spec:
+      containers:
+        - name: bots-dev
+          image: "bots-dev"
+          imagePullPolicy: Never
+          command:
+            - elixir
+            - --name
+            - "$(MY_POD_NAMESPACE)@$(MY_POD_IP)"
+            - -S
+            - mix
+            - phoenix.server
+            - --no-deps-check
+            - --no-compile
+            - --no-halt
+          env:
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MIX_ENV
+              value: prod
+            - name: PORT
+              value: "80"
+            - name: DATABASE_URL
+              value: {{getenv "DATABASE_URL"}}
+            - name: SECRET_KEY_BASE
+              value: {{getenv "SECRET_KEY_BASE"}}
+            - name: BOTS_MEMEBOT_BOT_ID
+              value: {{getenv "BOTS_MEMEBOT_BOT_ID"}}
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            limits:
+              cpu: 0.4
+              memory: "300Mi"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: "bots-dev"
+  labels:
+    project: bots
+spec:
+  selector:
+    app: bots
+    track: dev
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
