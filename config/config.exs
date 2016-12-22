@@ -14,6 +14,8 @@ config :bots, Bots.Endpoint,
   pubsub: [name: Bots.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :bots, ecto_repos: [Bots.Repo]
+
 config :bots, Bots.GroupMe.MemeBotController,
   bot_id: System.get_env("BOTS_MEMEBOT_BOT_ID"),
   help: """
