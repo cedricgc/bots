@@ -1,4 +1,4 @@
-FROM elixir:1.2-slim
+FROM elixir:1.3-slim
 MAINTAINER Cedric Charly <cedric.charly@gmail.com>
 
 ARG MIX_ENV
