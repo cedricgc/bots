@@ -4,6 +4,10 @@
 config:
 	confd -onetime -backend env -confdir kubernetes
 
+.PHONY: image
+image:
+	docker build . -t cedricgc/bots:$(shell git rev-parse HEAD)
+
 .PHONY: dev_image
 dev_image:
 	docker build . -t bots-dev
