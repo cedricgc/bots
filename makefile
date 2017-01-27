@@ -9,11 +9,11 @@ image:
 	docker build . -t cedricgc/bots:$(shell git rev-parse HEAD)
 
 .PHONY: dev_image
-dev_image:
+dev-image:
 	docker build . -t bots-dev
 
 .PHONY: test_image
-test_image:
+test-image:
 	docker build . -t bots-test --build-arg MIX_ENV=test
 
 .PHONY: test
