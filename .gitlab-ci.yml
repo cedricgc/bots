@@ -29,3 +29,5 @@ test:
     - mix deps.get --only test
   script:
     - mix test
+    - mix coveralls
+    - mix coveralls.detail
