@@ -11,7 +11,9 @@ defmodule Bots.Mixfile do
      start_permanent: Mix.env == :prod,
      aliases: aliases,
      deps: deps,
-     test_coverage: [tool: ExCoveralls]]
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test,
+                         "coveralls.html": :test]]
   end
 
   # Configuration for the OTP application.
