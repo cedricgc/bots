@@ -1,5 +1,16 @@
 stages:
+  - build
   - test
+
+build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - "docker build . -t cedricgc/bots:$CI_BUILD_REF"
 
 test:
   stage: test
