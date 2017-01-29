@@ -12,7 +12,6 @@ before_script:
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get --only test
-  - mix ecto.reset
 
 test:
   script:
