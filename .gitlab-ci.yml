@@ -1,18 +1,6 @@
 stages:
-  - build
   - test
-
-build:
-  stage: build
-  variables:
-    DOCKER_DRIVER: overlay
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - echo $CI_BUILD_REF
-  script:
-    - "docker build . -t cedricgc/bots:$CI_BUILD_REF"
+  - build
 
 test:
   stage: test
@@ -29,3 +17,13 @@ test:
     - mix deps.get --only test
   script:
     - mix coveralls.detail
+
+build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - "docker build . -t cedricgc/bots:$CI_BUILD_REF"
