@@ -10,7 +10,10 @@ defmodule Bots.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases,
-     deps: deps]
+     deps: deps,
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test,
+                         "coveralls.html": :test]]
   end
 
   # Configuration for the OTP application.
@@ -41,7 +44,8 @@ defmodule Bots.Mixfile do
      {:cowboy, "~> 1.0"},
      {:ex_json_schema, "~> 0.3.1"},
      {:poison, "~> 1.5.2"},
-     {:httpoison, "~> 0.8.3"}
+     {:httpoison, "~> 0.8.3"},
+     {:excoveralls, ">= 0.6.1"}
    ]
   end
 

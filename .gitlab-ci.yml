@@ -1,18 +1,29 @@
-image: elixir:1.4-slim
-
-services:
-  - postgres:9.5
-
-variables:
-  MIX_ENV: "test"
-
-before_script:
-  - apt-get update
-  - apt-get install -y postgresql-client
-  - mix local.rebar --force
-  - mix local.hex --force
-  - mix deps.get --only test
+stages:
+  - test
+  - build
 
 test:
+  stage: test
+  variables:
+    MIX_ENV: "test"
+  image: elixir:1.4-slim
+  services:
+    - postgres:9.5
+  before_script:
+    - apt-get update
+    - apt-get install -y postgresql-client
+    - mix local.rebar --force
+    - mix local.hex --force
+    - mix deps.get --only test
   script:
-    - mix test
+    - mix coveralls.detail
+
+build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - "docker build . -t cedricgc/bots:$CI_BUILD_REF"
