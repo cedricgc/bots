@@ -21,8 +21,7 @@ defmodule Bots.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Bots, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-                    :gettext, :phoenix_ecto, :postgrex, :httpoison]]
+     extra_applications: [:logger]]
   end
 
   # Specifies which paths to compile per environment.
